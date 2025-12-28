@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Card, Table, InputNumber, Tag, Row, Col, Tooltip } from "antd";
-import { SwapOutlined, DollarOutlined, PercentageOutlined } from "@ant-design/icons";
+import {
+  SwapOutlined,
+  DollarOutlined,
+  PercentageOutlined,
+} from "@ant-design/icons";
 import { useFinance } from "../../context/FinanceContext";
 
 const ControlSection = () => {
@@ -11,12 +15,12 @@ const ControlSection = () => {
 
   const calcPercent = (value) => {
     if (!inputs || !inputs.revenue) return 0;
-    return ((value / inputs.revenue) * 100).toFixed(1); 
+    return ((value / inputs.revenue) * 100).toFixed(1);
   };
 
   const handlePayrollChange = (val) => {
     const revenue = inputs.revenue || 0;
-    
+
     if (isPayrollPercent) {
       const calculatedValue = (val / 100) * revenue;
       updateInput("payroll", calculatedValue);
@@ -30,9 +34,9 @@ const ControlSection = () => {
   const getPayrollDisplayValue = () => {
     const revenue = inputs.revenue || 0;
     if (isPayrollPercent) {
-        // Nếu mode %, quy đổi từ tiền trong store ngược ra % để hiển thị
-        // VD: store có 39000, revenue 65000 -> hiển thị 60
-        return revenue > 0 ? (inputs.payroll / revenue) * 100 : 0;
+      // Nếu mode %, quy đổi từ tiền trong store ngược ra % để hiển thị
+      // VD: store có 39000, revenue 65000 -> hiển thị 60
+      return revenue > 0 ? (inputs.payroll / revenue) * 100 : 0;
     }
     // Nếu mode $, hiển thị số tiền bình thường
     return inputs.payroll;
@@ -50,7 +54,7 @@ const ControlSection = () => {
       key: "payroll",
       label: "Payroll",
       // các giá trị value/percent sẽ được xử lý ở columns render
-      value: inputs.payroll, 
+      value: inputs.payroll,
       percent: calcPercent(inputs.payroll),
       target: "40-60%",
     },
@@ -92,25 +96,44 @@ const ControlSection = () => {
               <InputNumber
                 value={getPayrollDisplayValue()}
                 onChange={handlePayrollChange}
+                min={0}
+                max={isPayrollPercent ? 100 : undefined}
                 formatter={(value) =>
                   isPayrollPercent
                     ? `${value}` // Nếu là % thì chỉ hiện số (hoặc thêm % tùy ý)
                     : `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
-                max={isPayrollPercent ? 100 : undefined} 
-                min={0}
-                className={`w-full text-right font-bold ${isPayrollPercent ? 'text-blue-600' : 'text-green-700'}`}
+                parser={(value) => {
+                  const parsed = value.replace(/\$\s?|(,*)/g, ""); // Loại bỏ ký tự đặc biệt
+                  if (isPayrollPercent && Number(parsed) > 100) {
+                    return 100; // Trả về 100 ngay lập tức nếu nhập quá
+                  }
+                  return parsed;
+                }}
+                className={`w-full text-right font-bold ${
+                  isPayrollPercent ? "text-blue-600" : "text-green-700"
+                }`}
                 size="small"
                 addonAfter={
-                    <Tooltip title={isPayrollPercent ? "Đổi sang nhập số tiền ($)" : "Đổi sang nhập phần trăm (%)"}>
-                        <div 
-                            className="cursor-pointer hover:text-blue-500 px-1 flex items-center justify-center"
-                            onClick={() => setIsPayrollPercent(!isPayrollPercent)}
-                        >
-                           {isPayrollPercent ? <PercentageOutlined /> : <DollarOutlined />}
-                           <SwapOutlined className="text-xs ml-1 text-gray-400" />
-                        </div>
-                    </Tooltip>
+                  <Tooltip
+                    title={
+                      isPayrollPercent
+                        ? "Đổi sang nhập số tiền ($)"
+                        : "Đổi sang nhập phần trăm (%)"
+                    }
+                  >
+                    <div
+                      className="cursor-pointer hover:text-blue-500 px-1 flex items-center justify-center"
+                      onClick={() => setIsPayrollPercent(!isPayrollPercent)}
+                    >
+                      {isPayrollPercent ? (
+                        <PercentageOutlined />
+                      ) : (
+                        <DollarOutlined />
+                      )}
+                      <SwapOutlined className="text-xs ml-1 text-gray-400" />
+                    </div>
+                  </Tooltip>
                 }
               />
             </div>
@@ -135,11 +158,13 @@ const ControlSection = () => {
       dataIndex: "percent",
       key: "percent",
       align: "center",
-      // Nếu đang nhập Payroll theo %, cột này sẽ hiển thị số tiền quy đổi (để người dùng đối chiếu)
-      // Còn các dòng khác vẫn hiện % bình thường
       render: (text, record) => {
-        if (record.key === 'payroll' && isPayrollPercent) {
-             return <span className="text-gray-500 text-xs">${Number(inputs.payroll).toLocaleString()}</span>
+        if (record.key === "payroll" && isPayrollPercent) {
+          return (
+            <span className="text-gray-500 text-xs">
+              ${Number(inputs.payroll).toLocaleString()}
+            </span>
+          );
         }
         return <span className="font-bold">{Math.round(text)}%</span>;
       },

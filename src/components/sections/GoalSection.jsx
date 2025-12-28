@@ -1,6 +1,7 @@
 import { Tag } from "antd";
 import { ArrowRightOutlined, RiseOutlined } from "@ant-design/icons";
 import { useFinance } from "../../context/FinanceContext";
+import { formatNumber } from "../../utils/formatters";
 const GoalSection = () => {
   const { inputs, results } = useFinance();
   const { goal } = results; // Lấy kết quả tính toán Goal
@@ -62,7 +63,7 @@ const GoalSection = () => {
                 Hiện tại
               </p>
               <p className="text-xl md:text-2xl font-bold text-gray-600">
-                ${inputs.revenue.toLocaleString()}
+                ${formatNumber(inputs.revenue)}
               </p>
             </div>
 
@@ -86,7 +87,7 @@ const GoalSection = () => {
             </p>
             <div className="flex items-baseline justify-center md:justify-end gap-2">
               <p className="text-2xl md:text-3xl font-black text-rose-600 drop-shadow-sm">
-                +${goal.gap.toLocaleString()}
+                +${formatNumber(goal.gap)}
               </p>
               <p className="text-sm text-amber-600 font-bold">/ tháng</p>
             </div>

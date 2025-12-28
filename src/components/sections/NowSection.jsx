@@ -21,14 +21,14 @@ const NowSection = () => {
           <InputNumber
             className=" bg-yellow-50 border-yellow-400 font-bold text-gray-800! text-sm w-64!"
             size="large"
-            value={inputs.comboPriceA !== null ? inputs.comboPriceA : ""}
+            value={inputs.revenue !== null ? inputs.revenue : ""}
             placeholder="Nhập doanh thu hiện tại"
             formatter={(value) =>
               `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
             parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
             onChange={(val) => updateInput("revenue", val)}
-            required
+            min={1}
           />
         </div>
 
