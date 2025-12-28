@@ -1,6 +1,6 @@
 // src/components/layout/Dashboard.jsx
-import { Layout, Button } from "antd";
-import { FilePdfOutlined } from "@ant-design/icons";
+import { Layout, Button, message, Modal } from "antd";
+import { FilePdfOutlined, ShareAltOutlined, CopyOutlined } from "@ant-design/icons";
 
 // Import các section (chúng ta sẽ code chi tiết ngay sau bước này)
 import NowSection from "../sections/NowSection";
@@ -10,17 +10,24 @@ import GoalSection from "../sections/GoalSection";
 import OptionsSection from "../sections/OptionsSection";
 import StickyFooter from "../StickyFooter";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFinance } from "../../context/FinanceContext";
 import { exportToPDF } from "../../utils/pdfExport";
 import { getBestOption } from "../../utils/bestOption";
+import { generateShareLink, copyToClipboard } from "../../utils/shareLink";
+
 
 const { Header, Content } = Layout;
 
 const Dashboard = () => {
-  const { results } = useFinance();
+  const {inputs, results } = useFinance();
   const nowSectionRef = useRef(null);
   const goalSectionRef = useRef(null);
+
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [shareLink, setShareLink] = useState("");
+
+
   const option1Ref = useRef(null);
   const option2Ref = useRef(null);
   const option3Ref = useRef(null);
@@ -37,7 +44,6 @@ const Dashboard = () => {
 
     // Xác định option tốt nhất
     const bestOption = getBestOption(results.options);
-    console.log("Best option:", bestOption);
 
     // Xác định section của option tốt nhất
     let bestOptionRef = null;
@@ -66,6 +72,26 @@ const Dashboard = () => {
       bestOption
     );
   };
+
+  const handleShare = () => {
+    const link = generateShareLink(inputs);
+    if (link) {
+      setShareLink(link);
+      setShareModalVisible(true);
+    } else {
+      message.error('Không thể tạo share link');
+    }
+  };
+
+  const handleCopyLink = async () => {
+    const success = await copyToClipboard(shareLink);
+    if (success) {
+      message.success('Đã copy link!');
+      setShareModalVisible(false);
+    } else {
+      message.error('Không thể copy link');
+    }
+  };
   return (
     <Layout className="min-h-screen bg-gray-50 flex flex-col font-sans">
       <Header className="bg-white! border-b h-16 flex items-center justify-between px-6 sticky top-0 z-50 shadow-sm">
@@ -75,6 +101,14 @@ const Dashboard = () => {
             NAIL FINANCE <span className="text-pink-600">PLANNER DEMO</span>
           </h1>
         </div>
+        <Button
+            type="default"
+            icon={<ShareAltOutlined />}
+            className="font-bold"
+            onClick={handleShare}
+          >
+            CHIA SẺ
+          </Button>
         <Button
           type="primary"
           danger
@@ -115,6 +149,39 @@ const Dashboard = () => {
           <StickyFooter />
         </div>
       </div>
+
+
+      {/* Share Modal */}
+      <Modal
+        title="Chia sẻ link"
+        open={shareModalVisible}
+        onCancel={() => setShareModalVisible(false)}
+        footer={[
+          <Button key="copy" type="primary" icon={<CopyOutlined />} onClick={handleCopyLink}>
+            Copy Link
+          </Button>,
+          <Button key="close" onClick={() => setShareModalVisible(false)}>
+            Đóng
+          </Button>,
+        ]}
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            Copy link này để chia sẻ với người khác. Khi mở link, họ sẽ thấy cùng dữ liệu như bạn.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={shareLink}
+              readOnly
+              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
+            />
+            <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
+              Copy
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Layout>
   );
 };

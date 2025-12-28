@@ -192,11 +192,11 @@ const Option2Upsell = () => {
         {/* 6. Amount/ Giờ (Input - màu vàng) */}
         <MetricRow
           label="Amount/ Giờ"
-          target={inputs.amountPerHour || 18}
+          target={inputs.amountPerHour}
           current="-"
           gap="-"
           isInput={true}
-          inputValue={inputs.amountPerHour || 18}
+          inputValue={inputs.amountPerHour}
           onInputChange={(val) => updateInput("amountPerHour", val)}
           tooltip="Nhập lương/giờ để tính W2 payroll"
         />
