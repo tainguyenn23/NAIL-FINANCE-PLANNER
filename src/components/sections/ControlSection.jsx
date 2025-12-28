@@ -154,14 +154,14 @@ const ControlSection = () => {
       },
     },
     {
-      title: "% Thực tế",
+      title: "%",
       dataIndex: "percent",
       key: "percent",
       align: "center",
       render: (text, record) => {
         if (record.key === "payroll" && isPayrollPercent) {
           return (
-            <span className="text-gray-500 text-xs">
+            <span className="text-gray-500 text-xs px-2">
               ${Number(inputs.payroll).toLocaleString()}
             </span>
           );
