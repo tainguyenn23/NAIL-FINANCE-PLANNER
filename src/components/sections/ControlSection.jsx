@@ -1,6 +1,5 @@
-// src/components/sections/ControlSection.jsx
-import React, { useState } from "react";
-import { Card, Table, InputNumber, Tag, Row, Col, Button, Tooltip } from "antd";
+import { useState } from "react";
+import { Card, Table, InputNumber, Tag, Row, Col, Tooltip } from "antd";
 import { SwapOutlined, DollarOutlined, PercentageOutlined } from "@ant-design/icons";
 import { useFinance } from "../../context/FinanceContext";
 

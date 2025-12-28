@@ -1,4 +1,4 @@
-import { Card, InputNumber, Row, Col, Statistic } from "antd";
+import { Card, InputNumber, Row, Col } from "antd";
 import { useFinance } from "../../context/FinanceContext";
 
 const NowSection = () => {

@@ -1,4 +1,3 @@
-// src/components/StickyFooter.jsx
 import { useFinance } from '../context/FinanceContext';
 import { Tag } from 'antd';
 import { RiseOutlined } from '@ant-design/icons';

@@ -1,6 +1,4 @@
-// src/components/sections/GoalSection.jsx
-import React from "react";
-import { Card, InputNumber, Tag } from "antd";
+import { Tag } from "antd";
 import { ArrowRightOutlined, RiseOutlined } from "@ant-design/icons";
 import { useFinance } from "../../context/FinanceContext";
 const GoalSection = () => {

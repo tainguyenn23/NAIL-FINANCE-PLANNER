@@ -1,5 +1,3 @@
-// src/components/sections/Option3Combo.jsx
-import React from "react";
 import { Card, Tabs, Tag, Row, Col, InputNumber, Button } from "antd";
 import { GiftOutlined } from "@ant-design/icons";
 import {

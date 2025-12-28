@@ -1,12 +1,9 @@
-// src/components/layout/Dashboard.jsx
 import { Layout, Button, message, Modal } from "antd";
 import { FilePdfOutlined, ShareAltOutlined, CopyOutlined } from "@ant-design/icons";
 
-// Import các section (chúng ta sẽ code chi tiết ngay sau bước này)
 import NowSection from "../sections/NowSection";
 import ControlSection from "../sections/ControlSection";
 import GoalSection from "../sections/GoalSection";
-// import GoalSection from '../sections/GoalSection';
 import OptionsSection from "../sections/OptionsSection";
 import StickyFooter from "../StickyFooter";
 

@@ -36,7 +36,7 @@ const ComparisonTable = () => {
       diff: `${formatCurrency(diffCost)}`,
       percent: calcPercent(diffCost, comparison.payrollperStaff1099),
       total_diff: diffCost * option2.staff,
-      isNegative: true, // Để tô màu đỏ
+      isNegative: true,
     },
 
     {
@@ -48,7 +48,7 @@ const ComparisonTable = () => {
       diff: `${formatCurrency(diffProfit)}`,
       percent: calcPercent(diffProfit, comparison.targetOwnerProfit1099),
       total_diff: diffProfit * option2.staff,
-      isNegative: true, // Để tô màu đỏ
+      isNegative: true,
     },
   ];
 
@@ -59,7 +59,6 @@ const ComparisonTable = () => {
       key: "label",
       width: "30%",
       render: (value, record) => {
-        // Nếu là dòng 1 (Input) -> Hiển thị kiểu ô Input nhưng Read-only
         if (record.type === "input_row") {
           return (
             <div className="flex justify-center items-center gap-2">
@@ -71,7 +70,6 @@ const ComparisonTable = () => {
             </div>
           );
         }
-        // Các dòng còn lại -> Text màu tím
         return (
           <span className="text-purple-700 font-bold text-lg">{value}</span>
         );
@@ -90,7 +88,7 @@ const ComparisonTable = () => {
       dataIndex: "w2_plan",
       key: "w2_plan",
       align: "center",
-      className: "bg-purple-50", // Nền nhẹ cho cột W2
+      className: "bg-purple-50",
       render: (value, record) => {
         if (record.type === "input_row") {
           return (
@@ -103,7 +101,6 @@ const ComparisonTable = () => {
             </div>
           );
         }
-        // Các dòng còn lại -> Text màu tím
         return (
           <span className="text-purple-700 font-bold text-lg">{value}</span>
         );

@@ -1,4 +1,3 @@
-// src/components/sections/options/Option1AverageTicket.jsx
 import { Card, Tag, Progress, Tooltip } from "antd";
 
 import { formatPercent, roundNumber } from "../../../utils/formatters";

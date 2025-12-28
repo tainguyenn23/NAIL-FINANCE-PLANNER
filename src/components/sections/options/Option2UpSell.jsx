@@ -1,4 +1,3 @@
-// src/components/sections/options/Option2Upsell.jsx
 import { useState } from "react";
 import { Card, Tooltip, InputNumber, Tag, Modal, Button } from "antd";
 import {
@@ -94,7 +93,7 @@ const MetricRow = ({
   </div>
 );
 
-const Option2Upsell = () => {
+const Option2UpSell = () => {
   const { inputs, results, updateInput } = useFinance();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { options } = results;
@@ -263,4 +262,4 @@ const Option2Upsell = () => {
   );
 };
 
-export default Option2Upsell;
+export default Option2UpSell;

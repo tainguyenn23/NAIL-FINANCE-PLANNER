@@ -9,44 +9,41 @@ import {
   calculateComboAddon,
   calculateComboDiscount,
 } from "../utils/calculations";
+import { getDataFromURL } from "../utils/shareLink";
 
 const FinanceContext = createContext();
 
 export const FinanceProvider = ({ children }) => {
+  const urlData = getDataFromURL();
   // INPUT DATA - Tất cả các ô màu vàng trong Excel
-  const [inputs, setInputs] = useState({
-    // --- Module 1: NOW ---
-    revenue: 65000, // Doanh thu / tháng
-    staff: 15, // Tổng số thợ
-    days: 30, // Tổng số ngày làm / tháng
-    aveTicket: 35, // Ave Amount Ticket/ Service
-    totalHoursPerDay: 10, // Tổng giờ làm / ngày
-    amountPerHour: 18, // Amount/H for options2
 
-    // --- Module 2: CONTROL ---
-    rent: 10000,
-    payroll: 39000,
-    supplies: 5000,
-    utilities: 5000,
-    marketing: 3300,
 
-    // --- Module 3: GOAL 2026 ---
-    // Có thể để system tự tính hoặc user nhập
-    goalRevenue: null, // Sẽ tính tự động dựa trên profit margin
-
-    // --- Module 4: OPTIONS Inputs ---
-    // Option 2: Upsell
-    currentPayrollType: "1099", // '1099' hoặc 'W2'
-
-    // Option 3: Combo Add-on
-    comboPriceA: 35,
-    comboPriceB: 30,
-    comboDiscountPercent: 20,
-    // Option 3: Combo Discount
-
-    // --- System Settings ---
-    inflationRate: 4, // Lạm phát / năm (%)
+  const [inputs, setInputs] = useState(() => {
+    if (urlData) {
+      return urlData; // Load từ URL
+    }
+    // Default values
+    return {
+      revenue: 65000,
+      staff: 15,
+      days: 30,
+      aveTicket: 35,
+      totalHoursPerDay: 10,
+      amountPerHour: 18,
+      rent: 10000,
+      payroll: 39000,
+      supplies: 5000,
+      utilities: 5000,
+      marketing: 3300,
+      goalRevenue: null,
+      currentPayrollType: "1099",
+      comboPriceA: 35,
+      comboPriceB: 30,
+      comboDiscountPercent: 20,
+      inflationRate: 4,
+    };
   });
+
 
   // REAL-TIME CALCULATIONS - Tất cả các ô không màu vàng
   const results = useMemo(() => {
