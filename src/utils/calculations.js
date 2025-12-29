@@ -1,8 +1,3 @@
-// src/utils/calculations.js
-
-// --- HELPER: Làm tròn số ---
-// const round = (num) => Math.round(num);
-// const fixed = (num, digits = 2) => parseFloat(num.toFixed(digits));
 
 /**
  * MODULE 1: NOW

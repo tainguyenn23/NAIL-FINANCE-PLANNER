@@ -10,7 +10,6 @@ import { useFinance } from "../../../context/FinanceContext";
 import { roundNumber } from "../../../utils/formatters";
 import ComparisonTable from "../../table/ComparisonTable";
 
-// Component con hiển thị 1 dòng dữ liệu 3 cột (giống Option1)
 const MetricRow = ({
   label,
   target,

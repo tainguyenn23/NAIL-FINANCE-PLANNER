@@ -1,4 +1,3 @@
-// src/utils/formatters.js
 // Format tiền tệ: 10000 -> $10,000
 export const formatCurrency = (value) => {
   if (value === undefined || value === null) return '$0';
@@ -9,7 +8,6 @@ export const formatCurrency = (value) => {
   }).format(value);
 };
 
-// Format số lượng: 1234.56 -> 1,235
 export const formatNumber = (value) => {
   if (value === undefined || value === null) return '0';
   return new Intl.NumberFormat('en-US', {

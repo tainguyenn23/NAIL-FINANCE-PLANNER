@@ -43,8 +43,6 @@ const Dashboard = () => {
 
     // Xác định option tốt nhất
     const bestOption = getBestOption(results.options);
-
-    // Xác định section của option tốt nhất
     let bestOptionRef = null;
     if (bestOption) {
       switch (bestOption.type) {
@@ -69,7 +67,7 @@ const Dashboard = () => {
         bestOptionSection: bestOptionRef?.current,
       },
       bestOption,
-      { inputs, results } // ← Thêm dòng này
+      { inputs, results } 
     );
   };
 

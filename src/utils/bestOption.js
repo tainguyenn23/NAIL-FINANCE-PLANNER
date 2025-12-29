@@ -1,8 +1,4 @@
-// src/utils/bestOption.js
 
-/**
- * Xác định option tốt nhất dựa trên feasibility và khả năng đạt mục tiêu
- */
 export const getBestOption = (options) => {
   const { option1, option2, option3Addon, option3Discount } = options;
 

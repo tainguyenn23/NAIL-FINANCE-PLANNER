@@ -1,4 +1,3 @@
-// src/components/PDFReport.jsx
 import {
   Document,
   Page,
@@ -6,11 +5,9 @@ import {
   View,
   StyleSheet,
   Font,
-} from "@react-pdf/renderer"; // 1. Thêm Import Font
+} from "@react-pdf/renderer"; 
 import { formatCurrency, roundNumber } from "../utils/formatters";
 
-// 2. ĐĂNG KÝ FONT (QUAN TRỌNG)
-// Đăng ký font Roboto bao gồm cả bản thường và bản đậm (bold) để hiển thị đúng tiêu đề
 Font.register({
   family: "Roboto",
   fonts: [

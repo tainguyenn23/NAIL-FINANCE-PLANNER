@@ -47,15 +47,13 @@ const MetricRow = ({
         : current}
     </div>
 
-    {/* Cột 3: Cần thêm (GAP) */}
     <div className="col-span-3 text-center">
       <Tag
         color="red"
         className="font-bold text-lg! px-3 py-1 border-0 rounded-full min-w-15"
       >
-        {/* 1. XỬ LÝ DẤU (SIGN) */}
+        {" "}
         {gap > 0 ? "+" : gap < 0 ? "-" : ""}
-        {/* 3. CON SỐ (Dùng Math.abs để bỏ dấu của số gốc đi, vì đã tự thêm dấu ở bước 1 rồi) */}
         {typeof gap === "number" ? Math.abs(gap).toLocaleString() : gap}
       </Tag>
     </div>
@@ -197,7 +195,6 @@ const Option1AverageTicket = () => {
                   : formatPercent(feasibility.percent) > 40
                   ? "Lý tưởng" // 40-80%: Vừa làm vừa nghỉ, doanh thu tốt
                   : "Vắng khách"}{" "}
-                {/* < 40%: Thợ ngồi chơi nhiều */}
               </span>
             </div>
             <Progress
