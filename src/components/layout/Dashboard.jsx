@@ -1,5 +1,9 @@
 import { Layout, Button, message, Modal } from "antd";
-import { FilePdfOutlined, ShareAltOutlined, CopyOutlined } from "@ant-design/icons";
+import {
+  FilePdfOutlined,
+  ShareAltOutlined,
+  CopyOutlined,
+} from "@ant-design/icons";
 
 import NowSection from "../sections/NowSection";
 import ControlSection from "../sections/ControlSection";
@@ -13,17 +17,15 @@ import { exportToPDF } from "../../utils/pdfExport";
 import { getBestOption } from "../../utils/bestOption";
 import { generateShareLink, copyToClipboard } from "../../utils/shareLink";
 
-
 const { Header, Content } = Layout;
 
 const Dashboard = () => {
-  const {inputs, results } = useFinance();
+  const { inputs, results } = useFinance();
   const nowSectionRef = useRef(null);
   const goalSectionRef = useRef(null);
 
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [shareLink, setShareLink] = useState("");
-
 
   const option1Ref = useRef(null);
   const option2Ref = useRef(null);
@@ -66,7 +68,8 @@ const Dashboard = () => {
         goalSection: goalSectionRef.current,
         bestOptionSection: bestOptionRef?.current,
       },
-      bestOption
+      bestOption,
+      { inputs, results } // ← Thêm dòng này
     );
   };
 
@@ -76,17 +79,17 @@ const Dashboard = () => {
       setShareLink(link);
       setShareModalVisible(true);
     } else {
-      message.error('Không thể tạo share link');
+      message.error("Không thể tạo share link");
     }
   };
 
   const handleCopyLink = async () => {
     const success = await copyToClipboard(shareLink);
     if (success) {
-      message.success('Đã copy link!');
+      message.success("Đã copy link!");
       setShareModalVisible(false);
     } else {
-      message.error('Không thể copy link');
+      message.error("Không thể copy link");
     }
   };
   return (
@@ -99,13 +102,13 @@ const Dashboard = () => {
           </h1>
         </div>
         <Button
-            type="default"
-            icon={<ShareAltOutlined />}
-            className="font-bold"
-            onClick={handleShare}
-          >
-            CHIA SẺ
-          </Button>
+          type="default"
+          icon={<ShareAltOutlined />}
+          className="font-bold"
+          onClick={handleShare}
+        >
+          CHIA SẺ
+        </Button>
         <Button
           type="primary"
           danger
@@ -147,14 +150,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-
       {/* Share Modal */}
       <Modal
         title="Chia sẻ link"
         open={shareModalVisible}
         onCancel={() => setShareModalVisible(false)}
         footer={[
-          <Button key="copy" type="primary" icon={<CopyOutlined />} onClick={handleCopyLink}>
+          <Button
+            key="copy"
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={handleCopyLink}
+          >
             Copy Link
           </Button>,
           <Button key="close" onClick={() => setShareModalVisible(false)}>
@@ -164,7 +171,8 @@ const Dashboard = () => {
       >
         <div className="space-y-4">
           <p className="text-gray-600">
-            Copy link này để chia sẻ với người khác. Khi mở link, họ sẽ thấy cùng dữ liệu như bạn.
+            Copy link này để chia sẻ với người khác. Khi mở link, họ sẽ thấy
+            cùng dữ liệu như bạn.
           </p>
           <div className="flex gap-2">
             <input
