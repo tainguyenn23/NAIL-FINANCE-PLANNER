@@ -24,17 +24,35 @@ const MetricRow = ({
     }`}
   >
     {/* Tên chỉ số */}
-    <div className="col-span-5 pl-2 md:pl-4 font-semibold text-gray-700 text-sm md:text-lg flex items-center gap-1">
-      <span className="truncate">{label}</span>
+    <div className="col-span-4 pl-2 md:pl-4 font-semibold text-gray-700 text-sm md:text-lg flex items-center gap-1">
+      <span
+        className="leading-tight wrap-break-words line-clamp-2 md:truncate"
+        title={label}
+      >
+        {label}
+      </span>
       {tooltip && (
-        <Tooltip title={tooltip}>
-          <InfoCircleOutlined className="text-gray-300 text-[10px] shrink-0" />
+        <Tooltip
+          title={tooltip}
+          trigger={["hover", "click"]} // Cho phép chạm vào để hiện trên mobile
+          overlayInnerStyle={{
+            padding: "8px 12px",
+            fontSize: "13px", // Chữ to hơn
+            lineHeight: "1.5",
+            textAlign: "center",
+          }}
+          arrow={false} // Tùy chọn: bỏ mũi tên cho thoáng
+        >
+          {/* Tăng vùng bấm cho icon bằng p-1 hoặc p-2 */}
+          <div className="p-1 cursor-pointer">
+            <InfoCircleOutlined className="text-gray-400 text-[10px] md:text-xs shrink-0" />
+          </div>
         </Tooltip>
       )}
     </div>
 
     {/* Cột 1: Mục tiêu 2026 */}
-    <div className="col-span-2 text-center font-bold text-blue-700 text-sm md:text-lg">
+    <div className="col-span-3 text-center font-bold text-blue-700 text-sm md:text-lg">
       {target === "-" ? "-" : Number(target).toLocaleString()}
     </div>
 
@@ -43,8 +61,8 @@ const MetricRow = ({
       {current === "-"
         ? "-"
         : typeof current === "number"
-        ? `${current.toLocaleString()}`
-        : current}
+          ? `${current.toLocaleString()}`
+          : current}
     </div>
 
     <div className="col-span-3 text-center">
@@ -103,54 +121,52 @@ const Option1AverageTicket = () => {
           {feasibility.label}
         </Tag>
       </div>
-      
-        <div className="bg-gray-50 border-b overflow-hidden">
-          <div className="grid grid-cols-12 gap-1 md:gap-2 bg-gray-50 py-2 md:py-3 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider border-b">
-            <div className="col-span-5 pl-2 md:pl-4">Chỉ số đo lường</div>
-            <div className="col-span-2 text-center text-blue-700">
-              Mục tiêu 2026
-            </div>
-            <div className="col-span-2 text-center">Hiện tại 2025</div>
-            <div className="col-span-3 text-center text-red-500">GROWTH</div>
-          </div>
+
+      <div className="bg-gray-50 border-b overflow-hidden">
+        <div className="grid grid-cols-12 gap-1 md:gap-2 bg-gray-50 py-2 md:py-3 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider border-b">
+          <div className="col-span-4 pl-2 md:pl-4">Chỉ số đo lường</div>
+          <div className="col-span-3 text-center text-blue-700">Mục tiêu</div>
+          <div className="col-span-2 text-center">Hiện tại</div>
+          <div className="col-span-3 text-center text-red-500">GROWTH</div>
         </div>
-     
+      </div>
+
       <div className="bg-white divide-y divide-gray-100">
         <div className="">
-        {/* 2. Ticket cần thêm / ngày */}
-        <MetricRow
-          label="Ticket cần thêm / ngày"
-          target={Math.round(option1.targetDay)}
-          current={Math.round(option1.currentDay)}
-          gap={Math.round(gapDay.toFixed(2))}
-          tooltip="Số lượng khách cả tiệm cần kiếm thêm mỗi ngày"
-        />
-        {/* AVT TICKET STAFF PER MONTH */}
-        <MetricRow
-          label="AVT Ticket / Thợ"
-          target={Math.round(avtTickekStaffPerMonth)}
-          current={Math.round(currentAvtTickekStaffPerMonth)}
-          gap={Math.round(gapAvtTicketStaffPerMonth)}
-          tooltip="Số lượng khách cả tiệm cần kiếm thêm mỗi ngày"
-        />
+          {/* 2. Ticket cần thêm / ngày */}
+          <MetricRow
+            label="Ticket cần thêm / ngày"
+            target={Math.round(option1.targetDay)}
+            current={Math.round(option1.currentDay)}
+            gap={Math.round(gapDay.toFixed(2))}
+            tooltip="Số lượng khách cả tiệm cần kiếm thêm mỗi ngày"
+          />
+          {/* AVT TICKET STAFF PER MONTH */}
+          <MetricRow
+            label="AVT Ticket / Thợ"
+            target={Math.round(avtTickekStaffPerMonth)}
+            current={Math.round(currentAvtTickekStaffPerMonth)}
+            gap={Math.round(gapAvtTicketStaffPerMonth)}
+            tooltip="Số lượng khách cả tiệm cần kiếm thêm mỗi ngày"
+          />
 
-        {/* 3. Ticket / ngày / thợ (Quan trọng nhất - Highlight) */}
-        <MetricRow
-          label="Ticket / ngày / thợ"
-          target={roundNumber(targetPerStaffDay)}
-          current={roundNumber(currentPerStaffDay)}
-          gap={roundNumber(kpiPerStaff)}
-          isHighlight={true}
-          tooltip="Mỗi thợ phải làm bao nhiêu khách một ngày"
-        />
-        {/* 4. Tổng ticket cần có / tháng */}
-        <MetricRow
-          label="Tổng ticket/ tháng"
-          target={roundNumber(targetTickets)}
-          current={roundNumber(currentTickets)}
-          gap={roundNumber(extraTicketsNeeded)}
-          tooltip="Tổng mục tiêu doanh số ticket cho cả tháng"
-        />
+          {/* 3. Ticket / ngày / thợ (Quan trọng nhất - Highlight) */}
+          <MetricRow
+            label="Ticket / ngày / thợ"
+            target={roundNumber(targetPerStaffDay)}
+            current={roundNumber(currentPerStaffDay)}
+            gap={roundNumber(kpiPerStaff)}
+            isHighlight={true}
+            tooltip="Mỗi thợ phải làm bao nhiêu khách một ngày"
+          />
+          {/* 4. Tổng ticket cần có / tháng */}
+          <MetricRow
+            label="Tổng ticket/ tháng"
+            target={roundNumber(targetTickets)}
+            current={roundNumber(currentTickets)}
+            gap={roundNumber(extraTicketsNeeded)}
+            tooltip="Tổng mục tiêu doanh số ticket cho cả tháng"
+          />
         </div>
       </div>
 
@@ -185,20 +201,20 @@ const Option1AverageTicket = () => {
                   formatPercent(feasibility.percent) > 90
                     ? "text-red-600" // Quá tải -> Đỏ
                     : formatPercent(feasibility.percent) > 80
-                    ? "text-orange-600" // Căng thẳng -> Cam
-                    : formatPercent(feasibility.percent) > 40
-                    ? "text-green-600" // Lý tưởng -> Xanh
-                    : "text-gray-500" // Vắng khách -> Xám/Vàng
+                      ? "text-orange-600" // Căng thẳng -> Cam
+                      : formatPercent(feasibility.percent) > 40
+                        ? "text-green-600" // Lý tưởng -> Xanh
+                        : "text-gray-500" // Vắng khách -> Xám/Vàng
                 }`}
               >
                 {formatPercent(feasibility.percent)}% -{" "}
                 {formatPercent(feasibility.percent) > 90
                   ? "Quá tải" // > 90%: Thở không nổi
                   : formatPercent(feasibility.percent) > 80
-                  ? "Căng thẳng" // 80-90%: Rất đông, làm liên tục
-                  : formatPercent(feasibility.percent) > 40
-                  ? "Lý tưởng" // 40-80%: Vừa làm vừa nghỉ, doanh thu tốt
-                  : "Vắng khách"}{" "}
+                    ? "Căng thẳng" // 80-90%: Rất đông, làm liên tục
+                    : formatPercent(feasibility.percent) > 40
+                      ? "Lý tưởng" // 40-80%: Vừa làm vừa nghỉ, doanh thu tốt
+                      : "Vắng khách"}{" "}
               </span>
             </div>
             <Progress
@@ -207,8 +223,8 @@ const Option1AverageTicket = () => {
                 feasibility.color === "green"
                   ? "#52c41a"
                   : feasibility.color === "orange"
-                  ? "#fa8c16"
-                  : "#ff4d4f"
+                    ? "#fa8c16"
+                    : "#ff4d4f"
               }
               showInfo={false}
               strokeLinecap="square"
@@ -263,8 +279,8 @@ const Option1AverageTicket = () => {
               feasibility.color === "green"
                 ? "#52c41a"
                 : feasibility.color === "orange"
-                ? "#fa8c16"
-                : "#ff4d4f"
+                  ? "#fa8c16"
+                  : "#ff4d4f"
             }
             showInfo={false}
             size="small"
@@ -275,8 +291,8 @@ const Option1AverageTicket = () => {
               feasibility.color === "green"
                 ? "text-green-600"
                 : feasibility.color === "orange"
-                ? "text-orange-600"
-                : "text-red-600"
+                  ? "text-orange-600"
+                  : "text-red-600"
             }`}
           >
             {formatPercent(feasibility.percent)}%

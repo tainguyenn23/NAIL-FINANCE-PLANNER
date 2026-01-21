@@ -140,12 +140,12 @@ const Dashboard = () => {
         placement="right"
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
-        size="large"
+        width="70%"
       >
         <div className="flex flex-col gap-3">
           <Button
             type="default"
-            size="large"
+            size="medium"
             icon={<ShareAltOutlined />}
             className="w-full font-bold"
             onClick={handleShare}

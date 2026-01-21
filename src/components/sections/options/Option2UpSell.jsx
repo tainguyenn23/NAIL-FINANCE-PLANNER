@@ -30,10 +30,28 @@ const MetricRow = ({
   >
     {/* Tên chỉ số */}
     <div className="col-span-4 pl-2 md:pl-4 text-gray-700 text-sx md:text-sm flex items-center gap-1">
-      <span className="truncate">{label}</span>
+      <span
+        className="leading-tight wrap-break-words line-clamp-2 md:truncate"
+        title={label}
+      >
+        {label}
+      </span>
       {tooltip && (
-        <Tooltip title={tooltip}>
-          <InfoCircleOutlined className="text-gray-300 text-[10px] shrink-0" />
+        <Tooltip
+          title={tooltip}
+          trigger={["hover", "click"]} 
+          overlayInnerStyle={{
+            padding: "8px 12px",
+            fontSize: "13px", // Chữ to hơn
+            lineHeight: "1.5",
+            textAlign: "center",
+          }}
+          arrow={false} // Tùy chọn: bỏ mũi tên cho thoáng
+        >
+          {/* Tăng vùng bấm cho icon bằng p-1 hoặc p-2 */}
+          <div className="p-1 cursor-pointer">
+            <InfoCircleOutlined className="text-gray-400 text-[10px] md:text-xs shrink-0" />
+          </div>
         </Tooltip>
       )}
     </div>
@@ -156,7 +174,7 @@ const Option2UpSell = () => {
 
           {/* 3. AVE PAYROLL/ Thợ */}
           <MetricRow
-            label="AVE PAYROLL/Thợ"
+            label="Ave Payroll/Thợ"
             target={roundNumber(option2.avePayrollPerStaff)}
             current={roundNumber(option2.CurrentavePayrollPerStaff)}
             gap="-"
