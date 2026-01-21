@@ -1,8 +1,9 @@
-import { Layout, Button, message, Modal } from "antd";
+import { Layout, Button, message, Modal, Drawer } from "antd";
 import {
   FilePdfOutlined,
   ShareAltOutlined,
   CopyOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 
 import NowSection from "../sections/NowSection";
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const { inputs, results } = useFinance();
   const nowSectionRef = useRef(null);
   const goalSectionRef = useRef(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [shareLink, setShareLink] = useState("");
@@ -69,6 +71,7 @@ const Dashboard = () => {
       bestOption,
       { inputs, results } 
     );
+    setDrawerVisible(false);
   };
 
   const handleShare = () => {
@@ -79,6 +82,7 @@ const Dashboard = () => {
     } else {
       message.error("Không thể tạo share link");
     }
+    setDrawerVisible(false);
   };
 
   const handleCopyLink = async () => {
@@ -92,34 +96,79 @@ const Dashboard = () => {
   };
   return (
     <Layout className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      <Header className="bg-white! border-b h-16 flex items-center justify-between px-6 sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">💅</span>
-          <h1 className="text-lg font-bold text-gray-800 m-0 tracking-tight">
-            NAIL FINANCE <span className="text-pink-600">PLANNER DEMO</span>
+      <Header className="bg-white! border-b h-14 md:h-16 flex items-center justify-between px-3 md:px-6 sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center gap-1 md:gap-2 flex-1 min-w-0">
+          <span className="text-xl md:text-2xl">💅</span>
+          <h1 className="text-xs md:text-lg font-bold text-gray-800 m-0 tracking-tight truncate">
+            NAIL FINANCE <span className="text-pink-600 hidden sm:inline">PLANNER DEMO</span>
           </h1>
         </div>
+        
+        {/* Desktop buttons */}
+        <div className="hidden md:flex gap-2">
+          <Button
+            type="default"
+            icon={<ShareAltOutlined />}
+            className="font-bold"
+            onClick={handleShare}
+          >
+            CHIA SẺ
+          </Button>
+          <Button
+            type="primary"
+            danger
+            icon={<FilePdfOutlined />}
+            className="font-bold shadow hover:scale-105 transition-transform"
+            onClick={handleExportPDF}
+          >
+            XUẤT BÁO CÁO
+          </Button>
+        </div>
+
+        {/* Mobile menu button */}
         <Button
-          type="default"
-          icon={<ShareAltOutlined />}
-          className="font-bold"
-          onClick={handleShare}
-        >
-          CHIA SẺ
-        </Button>
-        <Button
-          type="primary"
-          danger
-          icon={<FilePdfOutlined />}
-          className="font-bold shadow hover:scale-105 transition-transform"
-          onClick={handleExportPDF}
-        >
-          XUẤT BÁO CÁO
-        </Button>
+          type="text"
+          icon={<MenuOutlined className="text-lg" />}
+          className="md:hidden"
+          onClick={() => setDrawerVisible(true)}
+        />
       </Header>
 
-      <Content className="flex-1 p-6 w-full max-w-6xl mx-auto space-y-8 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Mobile Drawer */}
+      <Drawer
+        title="Menu"
+        placement="right"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        size="large"
+      >
+        <div className="flex flex-col gap-3">
+          <Button
+            type="default"
+            size="large"
+            icon={<ShareAltOutlined />}
+            className="w-full font-bold"
+            onClick={handleShare}
+            block
+          >
+            CHIA SẺ
+          </Button>
+          <Button
+            type="primary"
+            danger
+            size="large"
+            icon={<FilePdfOutlined />}
+            className="w-full font-bold"
+            onClick={handleExportPDF}
+            block
+          >
+            XUẤT BÁO CÁO
+          </Button>
+        </div>
+      </Drawer>
+
+      <Content className="flex-1 p-3 md:p-6 w-full max-w-6xl mx-auto space-y-4 md:space-y-8 pb-28 md:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-6">
           <div className="lg:col-span-4" ref={nowSectionRef}>
             <NowSection />
           </div>
@@ -128,12 +177,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="p-0 rounded-xl" ref={goalSectionRef}>
+        <div className="rounded-lg md:rounded-xl" ref={goalSectionRef}>
           <GoalSection />
         </div>
 
         {/* Hàng 3: OPTIONS */}
-        <div className="border-l-4 border-pink-500 pl-4">
+        <div className=" md:pl-4">
           <OptionsSection
             option1Ref={option1Ref}
             option2Ref={option2Ref}
@@ -142,8 +191,8 @@ const Dashboard = () => {
         </div>
       </Content>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t-4 border-pink-600 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] p-4 z-40">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t-2 md:border-t-4 border-pink-600 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] p-2 md:p-4 z-40">
+        <div className="max-w-6xl mx-auto">
           <StickyFooter />
         </div>
       </div>
@@ -168,18 +217,18 @@ const Dashboard = () => {
         ]}
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             Copy link này để chia sẻ với người khác. Khi mở link, họ sẽ thấy
             cùng dữ liệu như bạn.
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <input
               type="text"
               value={shareLink}
               readOnly
-              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500 text-xs md:text-sm"
             />
-            <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
+            <Button icon={<CopyOutlined />} onClick={handleCopyLink} className="md:w-auto">
               Copy
             </Button>
           </div>

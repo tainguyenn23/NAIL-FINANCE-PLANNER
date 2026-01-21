@@ -37,6 +37,7 @@ export const calculateControlMetrics = (data) => {
     inflationRate,
   } = data;
 
+  // tổng chi phí
   const totalExpense = rent + payroll + supplies + utilities + marketing;
   const profit = revenue - totalExpense;
 
@@ -98,6 +99,7 @@ export const calculateControlMetrics = (data) => {
     profitMarginAfterInflation, // Dùng để đánh giá rủi ro và tính Goal
     riskAssessment,
     expenseAfterInflation,
+    monthlyInflationFactor
   };
 };
 
@@ -106,33 +108,50 @@ export const calculateControlMetrics = (data) => {
  * Tính doanh thu mục tiêu để đạt Profit Margin mong muốn (ví dụ 20%)
  */
 export const calculateGoal2026 = (data) => {
-  const { currentRevenue, currentProfitMargin, inflationRate, strategyTag } =
+  const { currentRevenue, currentProfitMargin, inflationRate, strategyTag, goalRevenue } =
     data;
 
+  
+    // Nếu có goalRevenue từ input (người dùng tự điều chỉnh), dùng nó
+  if (goalRevenue && goalRevenue > 0) {
+    const gap = goalRevenue - currentRevenue;
+    // tỷ llệ cần phát triển
+    const growthPercent = currentRevenue > 0 
+      ? ((gap / currentRevenue) * 100).toFixed(1)
+      : "0.0";
+    
+    return {
+      targetRevenue: goalRevenue,
+      gap,
+      strategyTag,
+      growthPercent,
+    };
+  }
+
   // Công thức Excel: IF(C25="DUY TRÌ", 0, 20% - (C15 - C21))
-  let growthPercent = 0;
+  let rawPercent = 0;
 
   if (strategyTag !== "DUY TRÌ") {
     // Dùng giá trị chính xác: 20% - (4.15% - 4%) = 19.85%
     const exactProfitMargin = currentProfitMargin / 100; // 4.15 → 0.0415
     const exactInflationRate = inflationRate / 100; // 4 → 0.04
 
-    growthPercent = 0.2 - (exactProfitMargin - exactInflationRate);
-    if (growthPercent < 0) growthPercent = 0;
+    rawPercent = 0.2 - (exactProfitMargin - exactInflationRate);
+    if (rawPercent < 0) rawPercent = 0;
   }
 
+  const growthPercent =  parseFloat((rawPercent * 100 ).toFixed(4)); // Giữ 4 chữ số thập phân để tính toán chính xác hơn
   // Tính doanh thu mục tiêu: doanh thu + (doanh thu * growthPercent)
-  const revenueIncrease = currentRevenue * growthPercent;
+  const revenueIncrease = currentRevenue * (growthPercent / 100);
   // Excel làm tròn revenueIncrease trước khi cộng
-  const roundedIncrease = Math.round(revenueIncrease);
-  const targetRevenue = currentRevenue + roundedIncrease;
+  const targetRevenue = Math.round(currentRevenue + revenueIncrease);
   const gap = targetRevenue - currentRevenue;
 
   return {
     targetRevenue,
     gap,
     strategyTag,
-    growthPercent: Math.ceil(growthPercent * 100), // 19.85% → 19.9%
+    growthPercent: growthPercent.toFixed(3), // 19.85% → 19.9%
   };
 };
 

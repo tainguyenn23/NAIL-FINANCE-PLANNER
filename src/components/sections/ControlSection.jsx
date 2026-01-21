@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Card, Table, InputNumber, Tag, Row, Col, Tooltip } from "antd";
+import { CaretDownOutlined } from "@ant-design/icons";
+
 import {
   SwapOutlined,
   DollarOutlined,
@@ -20,7 +22,6 @@ const ControlSection = () => {
 
   const handlePayrollChange = (val) => {
     const revenue = inputs.revenue || 0;
-
     if (isPayrollPercent) {
       const calculatedValue = (val / 100) * revenue;
       updateInput("payroll", calculatedValue);
@@ -29,16 +30,11 @@ const ControlSection = () => {
     }
   };
 
-  // Tính toán giá trị hiển thị cho ô Input Payroll
-  // inputs.payroll trong Context LUÔN LUÔN lưu số tiền (Value)
   const getPayrollDisplayValue = () => {
     const revenue = inputs.revenue || 0;
     if (isPayrollPercent) {
-      // Nếu mode %, quy đổi từ tiền trong store ngược ra % để hiển thị
-      // VD: store có 39000, revenue 65000 -> hiển thị 60
       return revenue > 0 ? (inputs.payroll / revenue) * 100 : 0;
     }
-    // Nếu mode $, hiển thị số tiền bình thường
     return inputs.payroll;
   };
 
@@ -53,7 +49,6 @@ const ControlSection = () => {
     {
       key: "payroll",
       label: "Payroll",
-      // các giá trị value/percent sẽ được xử lý ở columns render
       value: inputs.payroll,
       percent: calcPercent(inputs.payroll),
       target: "40-60%",
@@ -74,7 +69,7 @@ const ControlSection = () => {
     },
     {
       key: "marketing",
-      label: "Marketing & Merchant",
+      label: "Marketing",
       value: inputs.marketing,
       percent: calcPercent(inputs.marketing),
       target: "5-8%",
@@ -82,56 +77,62 @@ const ControlSection = () => {
   ];
 
   const columns = [
-    { title: "Hạng mục", dataIndex: "label", key: "label" },
     {
-      title: "Nhập liệu", // Đổi tên cột cho đúng ngữ cảnh
+      title: "Hạng mục",
+      dataIndex: "label",
+      key: "label",
+      width: "25%",
+      fixed: "left", // Cố định trên mobile khi scroll
+      render: (text) => (
+        <span className="font-bold text-gray-700 text-[12px]">{text}</span>
+      ),
+    },
+    {
+      title: "Nhập liệu",
       dataIndex: "value",
       key: "value",
-      width: 180,
+      width: "40%",
       render: (text, record) => {
-        // --- LOGIC RIÊNG CHO PAYROLL ---
         if (record.key === "payroll") {
           return (
-            <div className="flex items-center gap-1">
+            <div className="flex flex-col w-full">
+              {/* --- DÒNG NOTE NHỎ Ở TRÊN --- */}
+              {/* Dùng leading-none và text-[9px] để không chiếm nhiều chiều cao */}
+              <span className="text-[9px] text-gray-400 italic mb-1 ml-0.5 leading-none">
+                * Nhấn icon để đổi đơn vị
+              </span>
+
               <InputNumber
                 value={getPayrollDisplayValue()}
                 onChange={handlePayrollChange}
-                min={0}
-                max={isPayrollPercent ? 100 : undefined}
+                className="w-full font-bold"
+                size="small"
+                // Formatter logic cũ
                 formatter={(value) =>
                   isPayrollPercent
-                    ? `${value}` // Nếu là % thì chỉ hiện số (hoặc thêm % tùy ý)
+                    ? `${value}%`
                     : `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
-                parser={(value) => {
-                  const parsed = value.replace(/\$\s?|(,*)/g, ""); // Loại bỏ ký tự đặc biệt
-                  if (isPayrollPercent && Number(parsed) > 100) {
-                    return 100; // Trả về 100 ngay lập tức nếu nhập quá
-                  }
-                  return parsed;
-                }}
-                className={`w-full text-right font-bold ${
-                  isPayrollPercent ? "text-blue-600" : "text-green-700"
-                }`}
-                size="small"
+                parser={(value) => value.replace(/\$\s?|%|(,*)/g, "")}
+                // --- PHẦN NÚT BẤM (ADDON) ---
                 addonAfter={
                   <Tooltip
                     title={
                       isPayrollPercent
-                        ? "Đổi sang nhập số tiền ($)"
-                        : "Đổi sang nhập phần trăm (%)"
+                        ? "Đổi sang nhập tiền ($)"
+                        : "Đổi sang nhập %"
                     }
                   >
                     <div
-                      className="cursor-pointer hover:text-blue-500 px-1 flex items-center justify-center"
+                      className="cursor-pointer flex items-center justify-center h-full px-2 bg-gray-100 hover:bg-gray-200 border-l border-gray-300 transition-colors group"
                       onClick={() => setIsPayrollPercent(!isPayrollPercent)}
+                      style={{
+                        minWidth: "26px", // Đảm bảo độ rộng tối thiểu để dễ bấm trên mobile
+                        borderTopRightRadius: "4px",
+                        borderBottomRightRadius: "4px",
+                      }}
                     >
-                      {isPayrollPercent ? (
-                        <PercentageOutlined />
-                      ) : (
-                        <DollarOutlined />
-                      )}
-                      <SwapOutlined className="text-xs ml-1 text-gray-400" />
+                      <SwapOutlined className="text-[10px] text-gray-500 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </Tooltip>
                 }
@@ -140,16 +141,20 @@ const ControlSection = () => {
           );
         }
 
+        // Các dòng khác (Rent, Supplies...) căn giữa theo chiều dọc để đẹp đội hình
         return (
-          <InputNumber
-            value={text}
-            onChange={(val) => updateInput(record.key, val)}
-            formatter={(value) =>
-              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            className="w-full bg-yellow-50 text-right"
-            size="small"
-          />
+          <div className="flex flex-col w-full justify-end h-full pt-3">
+            {/* Thêm pt-3 để bù lại khoảng trống do dòng note của Payroll tạo ra, giúp các ô input thẳng hàng nhau */}
+            <InputNumber
+              value={text}
+              onChange={(val) => updateInput(record.key, val)}
+              formatter={(value) =>
+                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              className="w-full bg-yellow-50 font-bold"
+              size="small"
+            />
+          </div>
         );
       },
     },
@@ -157,132 +162,178 @@ const ControlSection = () => {
       title: "%",
       dataIndex: "percent",
       key: "percent",
+      width: "18%",
       align: "center",
       render: (text, record) => {
         if (record.key === "payroll" && isPayrollPercent) {
           return (
-            <span className="text-gray-500 text-xs px-2">
-              ${Number(inputs.payroll).toLocaleString()}
+            <span className="text-gray-400 text-[10px]">
+              ${Math.round(inputs.payroll).toLocaleString()}
             </span>
           );
         }
-        return <span className="font-bold">{Math.round(text)}%</span>;
+        const currentPercent = parseFloat(text);
+        let maxTarget = 100
+        if (record.target && record.target.includes("-")) {
+          const parts = record.target.split("-");
+          maxTarget = parseFloat(parts[1].replace("%", ""));
+        }
+        const isExceeded = currentPercent > maxTarget;
+        return (
+          <span className={`font-bold ${isExceeded ? "text-red-500" : "text-gray-600"}`}>
+            {Math.round(currentPercent)}%
+            </span>
+        );
       },
     },
     {
       title: "Target",
       dataIndex: "target",
       key: "target",
-      className: "text-gray-900 text-xs",
+      width: "17%",
       align: "right",
+      render: (text) => (
+        <span className="text-gray-700 text-[10px]">{text}</span>
+      ),
     },
   ];
 
   return (
-    <Card
-      title={
-        <span className="text-green-700 font-bold">
-          2. CHI PHÍ CƠ CẤU (CONTROL)
-        </span>
-      }
-      className="h-full shadow-sm border-t-4 border-green-600"
-      size="small"
-    >
-      <Row gutter={[24, 24]}>
-        <Col xs={24} md={14}>
-          <Table
-            dataSource={expenseData}
-            columns={columns}
-            pagination={false}
-            size="small"
-            summary={() => {
-              const totalPercent = calcPercent(control.totalExpense);
-              return (
-                <>
-                  <Table.Summary.Row className="bg-gray-100 font-bold">
-                    <Table.Summary.Cell>Total tháng</Table.Summary.Cell>
-                    <Table.Summary.Cell className="text-right text-red-600">
-                      ${control.totalExpense.toLocaleString()}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell className="text-center text-red-600">
-                      {Math.round(totalPercent)}%
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell />
-                  </Table.Summary.Row>
-                  <Table.Summary.Row className="bg-gray-100 font-bold w-full">
-                    <Table.Summary.Cell>Total năm</Table.Summary.Cell>
-                    <Table.Summary.Cell className="text-right text-red-600">
-                      ${control.totalExpenseYear.toLocaleString()}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell />
-                    <Table.Summary.Cell />
-                  </Table.Summary.Row>
-                </>
-              );
-            }}
-          />
-        </Col>
+    <div className="finance-container">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        .ant-table-cell { padding: 8px 4px !important; font-size: 13px !important; }
+        .ant-card-body { padding: 12px !important; }
+        .ant-input-number-group-addon { padding: 0 4px !important; }
+      `,
+        }}
+      />
 
-        {/* Cột 2: (Scorecard) -*/}
-        <Col xs={24} md={10}>
-          <div
-            className={`h-full p-6 rounded-xl border flex flex-col justify-center items-center text-center transition-colors duration-300
-            ${
-              control.riskAssessment.color === "red"
-                ? "bg-red-50 border-red-200"
-                : control.riskAssessment.color === "orange"
-                ? "bg-orange-50 border-orange-200"
-                : "bg-blue-50 border-blue-200"
-            }`}
-          >
-            <p className="text-gray-500 uppercase text-xs font-bold tracking-widest mb-2">
-              Lợi nhuận trước thuế của tháng/năm
-            </p>
-
-            <h2
-              className={`text-5xl font-black mb-2
-               ${
-                 control.riskAssessment.color === "red"
-                   ? "text-red-600"
-                   : control.riskAssessment.color === "orange"
-                   ? "text-orange-600"
-                   : "text-blue-600"
-               }`}
+      <Card
+        title={
+          <span className="text-green-700 font-bold text-sm md:text-base uppercase">
+            2. Chi phí cơ cấu (Control)
+          </span>
+          
+        }
+        className="shadow-md border-t-4 border-green-600 rounded-lg"
+        
+      >
+        <Row gutter={[16, 24]}>
+          {/* PHẦN BẢNG - Chiếm 24 col trên mobile, 14 col trên desktop */}
+          <Col xs={24} lg={14}>
+            <Table
+              dataSource={expenseData}
+              columns={columns}
+              pagination={false}
+              size="small"
+              bordered={false}
+              tableLayout="fixed"
+              scroll={{ x: "max-content" }} // Đảm bảo cột target không bị mất
+              summary={() => {
+                const totalPercent = calcPercent(control.totalExpense);
+                return (
+                  <>
+                    <Table.Summary.Row className="bg-gray-50 font-bold">
+                      <Table.Summary.Cell index={0} fixed="left">
+                        Total tháng
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={1}
+                        className="text-right text-red-600"
+                      >
+                        ${control.totalExpense.toLocaleString()}
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={2}
+                        className="text-center text-red-600"
+                      >
+                        {Math.round(totalPercent)}%
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={3} />
+                    </Table.Summary.Row>
+                    <Table.Summary.Row className="bg-gray-50 font-bold">
+                      <Table.Summary.Cell index={0} fixed="left">
+                        Total năm
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={1}
+                        className="text-right text-red-600"
+                      >
+                        ${control.totalExpenseYear.toLocaleString()}
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={2} colSpan={2} />
+                    </Table.Summary.Row>
+                  </>
+                );
+              }}
+            />
+            <div className="mt-2 text-[10px] text-gray-400 text-right italic md:hidden">
+              * Vuốt ngang để xem hết nếu bị tràn nội dung tiết &rarr;
+            </div>
+          </Col>
+              
+          {/* PHẦN SCORECARD - Chiếm 24 col trên mobile, 10 col trên desktop */}
+          <Col xs={24} lg={10}>
+            <div
+              className={`h-full p-4 md:p-6 rounded-2xl border flex flex-col justify-center items-center text-center transition-all
+              ${
+                control.riskAssessment.color === "red"
+                  ? "bg-red-50 border-red-100"
+                  : control.riskAssessment.color === "orange"
+                    ? "bg-orange-50 border-orange-100"
+                    : "bg-blue-50 border-blue-100"
+              }`}
             >
-              {control.profitMargin}%
-            </h2>
+              <p className="text-gray-500 uppercase text-[10px] font-bold tracking-widest mb-2">
+                Lợi nhuận trước thuế
+              </p>
+              <h2
+                className={`text-4xl md:text-5xl font-black mb-1
+                ${
+                  control.riskAssessment.color === "red"
+                    ? "text-red-600"
+                    : control.riskAssessment.color === "orange"
+                      ? "text-orange-600"
+                      : "text-blue-600"
+                }`}
+              >
+                {control.profitMargin}%
+              </h2>
+              <Tag
+                color={control.riskAssessment.color}
+                className="text-[10px] font-bold uppercase px-2 py-0 border-none rounded-full"
+              >
+                {control.riskAssessment.label}
+              </Tag>
 
-            <Tag
-              color={control.riskAssessment.color}
-              className="text-sm font-bold px-3 py-1 uppercase"
-            >
-              {control.riskAssessment.label}
-            </Tag>
-
-            <div className="mt-6 pt-4 border-t border-gray-200 w-full">
-              <div className="flex justify-between text-sm mb-1">
-                <span>Amount Month:</span>
-                <span className="font-bold">
-                  ${control.profit.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Amount Year:</span>
-                <span className="font-bold">
-                  ${control.totalYear.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span>Lạm phát (4%):</span>
-                <span className="text-gray-500">
-                  -${(control.totalExpense * 0.04).toLocaleString()}
-                </span>
+              <div className="mt-5 pt-4 border-t border-gray-200/50 w-full space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-700">Amount Month:</span>
+                  <span className="font-bold text-gray-800">
+                    ${control.profit.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm md:text-sm pt-1 italic">
+                  <span className="text-gray-500">Lạm phát (4%)/tháng:</span>
+                  {/* // hiện tai là lạm phát tháng */}
+                  <span className="text-red-400">
+                    -${(control.totalExpense * 0.04).toLocaleString()} 
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-700">Amount Year:</span>
+                  <span className="font-bold text-gray-800">
+                    ${control.totalYear.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </Col>
-      </Row>
-    </Card>
+          </Col>
+        </Row>
+      </Card>
+    </div>
   );
 };
 

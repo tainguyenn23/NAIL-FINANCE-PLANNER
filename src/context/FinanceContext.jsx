@@ -67,6 +67,7 @@ export const FinanceProvider = ({ children }) => {
       currentProfitMargin: controlMetrics.profitMarginExact, // C15: % lợi nhuận trước thuế
       inflationRate: inputs.inflationRate, // C21: lạm phát năm (4%)
       strategyTag: controlMetrics.riskAssessment.strategyTag, // C25: từ đánh giá rủi ro
+      goalRevenue: inputs.goalRevenue
     });
 
     // 4. Tính Module 4: OPTIONS
